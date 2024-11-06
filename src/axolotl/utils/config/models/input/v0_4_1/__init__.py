@@ -67,8 +67,6 @@ class DeprecatedParameters(BaseModel):
     noisy_embedding_alpha: Optional[float] = None
     dpo_beta: Optional[float] = None
 
-    alternate_optimizer: Optional[str] = None
-
     @field_validator("max_packed_sequence_len")
     @classmethod
     def validate_max_packed_sequence_len(cls, max_packed_sequence_len):
@@ -98,14 +96,6 @@ class DeprecatedParameters(BaseModel):
         if dpo_beta is not None:
             LOG.warning("dpo_beta is deprecated, use rl_beta instead")
         return dpo_beta
-
-    @field_validator("alternate_optimizer")
-    @classmethod
-    def validate_alternate_optimizer(cls, alternate_optimizer):
-        if alternate_optimizer:
-            raise DeprecationWarning(
-                "alternate_optimizer is deprecated, use optimizer instead"
-            )
 
 
 class RemappedParameters(BaseModel):
