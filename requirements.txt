@@ -1,5 +1,15 @@
+
 --extra-index-url https://huggingface.github.io/autogptq-index/whl/cu118/
+torch==2.5.1
+
 packaging==23.2
+peft==0.13.2
+transformers==4.46.3
+tokenizers>=0.20.1
+bitsandbytes==0.44.1
+accelerate==1.1.0
+datasets==3.1.0
+deepspeed==0.15.4
 peft==0.13.2
 transformers==4.46.3
 tokenizers>=0.20.1
@@ -13,18 +23,21 @@ fire
 PyYAML>=6.0
 requests
 flash-attn==2.7.0.post2
+flash-attn==2.7.0.post2
 sentencepiece
 wandb
 einops
+xformers>=0.0.23.post1
 xformers>=0.0.23.post1
 optimum==1.16.2
 hf_transfer
 colorama
 numba
-numpy>=1.24.4,<=2.0.1
+numpy>=1.24.4,<=2.0.1,<=2.0.1
 # qlora things
 evaluate==0.4.1
 scipy
+scikit-learn==1.4.2
 scikit-learn==1.4.2
 pynvml
 art
@@ -34,14 +47,18 @@ python-dotenv==1.0.1
 autoawq==0.2.7.post2
 triton>=2.3.0
 liger-kernel==0.4.2
+autoawq==0.2.7.post2
+triton>=2.3.0
+liger-kernel==0.4.2
 
 mamba-ssm==1.2.0.post1
 
 # remote filesystems
-s3fs>=2024.5.0
-gcsfs>=2024.5.0
+s3fs>=2024.5.0>=2024.5.0
+gcsfs>=2024.5.0>=2024.5.0
 # adlfs
 
+trl==0.12.0
 trl==0.12.0
 zstandard==0.22.0
 fastcore

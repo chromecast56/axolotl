@@ -1,13 +1,13 @@
 base_model: TinyLlama/TinyLlama_v1.1
 tokenizer_type: AutoTokenizer
 
-load_in_8bit: true
+load_in_8bit: false
 load_in_4bit: false
 strict: false
 
 datasets:
-  - path: mhenrichsen/alpaca_2k_test
-    type: alpaca
+  - path: jamesliu1/c4
+    type: completion
 dataset_prepared_path:
 val_set_size: 0.05
 output_dir: ./outputs/lora-out

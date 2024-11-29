@@ -798,7 +798,11 @@ class AxolotlInputConfig(
     is_mistral_derived_model: Optional[bool] = Field(default=None)
     is_qwen_derived_model: Optional[bool] = Field(default=None)
 
-    plugins: Optional[List[str]] = Field(default=None)
+    # MONKEYPATCH
+    sparse_training: Optional[int] = None
+    sparsity_level: Optional[float] = None
+    histogram_path: Optional[str] = None
+    lookup_path: Optional[str] = None
 
     @field_validator("datasets", mode="before")
     @classmethod

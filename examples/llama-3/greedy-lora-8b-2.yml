@@ -1,0 +1,104 @@
+base_model: meta-llama/Meta-Llama-3-8B
+model_type: LlamaForCausalLM
+tokenizer_type: AutoTokenizer
+
+# load_in_8bit: true
+load_in_8bit: false
+load_in_4bit: false
+strict: false
+
+max_steps: 200
+
+# datasets:
+#   - path: tatsu-lab/alpaca
+#     type: alpaca
+datasets:
+  - path: jamesliu1/c4
+    type: completion
+
+
+
+dataset_prepared_path: # /home/jamesliu/data/c4
+val_set_size: 0.05
+
+sequence_len: 4096
+sample_packing: true
+eval_sample_packing: false
+pad_to_sequence_len: true
+
+adapter: lora
+lora_model_dir:
+lora_r: 32
+lora_alpha: 16
+# lora_dropout: 0.05
+lora_target_modules: 
+  - gate_proj
+  - down_proj
+  - up_proj
+  - q_proj
+  - v_proj
+  - k_proj
+  - o_proj
+#   - lm_head
+
+lora_target_linear:
+lora_fan_in_fan_out:
+lora_modules_to_save:
+  # - embed_tokens
+  # - lm_head
+
+
+gradient_accumulation_steps: 2
+micro_batch_size: 2
+num_epochs: 1
+optimizer: adamw_bnb_8bit
+# optimizer: adamw_torch_fused
+lr_scheduler: cosine
+# learning_rate: 0.0004
+learning_rate: 0.0003
+
+train_on_inputs: false
+group_by_length: false
+bf16: auto
+fp16:
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+s2_attention:
+
+warmup_steps: 10
+evals_per_epoch: 4
+eval_table_size:
+eval_max_new_tokens: 128
+saves_per_epoch: 1
+debug:
+deepspeed: deepspeed_configs/zero1.json
+weight_decay: 0.0
+fsdp:
+fsdp_config:
+special_tokens:
+   pad_token: <|end_of_text|>
+
+
+# sparse configs
+sparse_training: 1
+sparsity_level: 0.7
+histogram_path: /data_persistent2/jamesliu/sparsedoping/Llama-3-8B/histograms
+lookup_path: /data_persistent2/jamesliu/sparsedoping/Llama-3-8B/lookup
+
+# timestamp: ${now:%d_%H-%M-%S}
+wandb_mode: online
+wandb_project: llama3_greedy_lora
+wandb_entity:
+wandb_watch: all
+wandb_name: greedy_0.71_r32
+
+wandb_run_id: greedy_0.71_r32
+wandb_log_model: # "checkpoint" to log model to wandb Artifacts every `save_steps` or "end" to log only at the end of training
+output_dir: /data_persistent2/jamesliu/greedy-lora/greedy_0.71_r32
