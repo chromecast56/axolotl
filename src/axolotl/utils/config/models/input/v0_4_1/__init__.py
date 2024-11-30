@@ -804,6 +804,12 @@ class AxolotlInputConfig(
     histogram_path: Optional[str] = None
     lookup_path: Optional[str] = None
 
+    # EAGLE MONKEYPATCH
+    eagle_training: Optional[bool] = False
+    num_eagle_layers: Optional[int] = None
+    hidden_state_loss_coef: Optional[float] = None
+    lm_loss_coef: Optional[float] = None
+
     @field_validator("datasets", mode="before")
     @classmethod
     def deprecate_sharegpt_datasets(cls, datasets):

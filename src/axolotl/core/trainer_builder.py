@@ -397,6 +397,9 @@ class SchedulerMixin(Trainer):
         return self.lr_scheduler
 
 
+
+
+
 class AxolotlTrainer(SchedulerMixin, Trainer):
     """
     Extend the base Trainer for axolotl helpers
@@ -918,6 +921,20 @@ class AxolotlTrainer(SchedulerMixin, Trainer):
         os.makedirs(output_dir, exist_ok=True)
         return super()._save_checkpoint(model, trial, **kwargs)
 
+class EagleTrainer(AxolotlTrainer):
+    def compute_loss(self, model, inputs, return_outputs=False, num_items_in_batch=None):
+        outputs = model(**inputs)
+        
+        # During evaluation, explicitly log the metric
+        if not model.training:
+            # Convert to scalar value if it's a tensor
+            top1_value = outputs.top1.detach().float().mean().item() if torch.is_tensor(outputs.top1) else float(outputs.top1)
+            
+            # Log directly to self.state.log_history
+            self.log({"eval_top1": top1_value})
+            
+        return (outputs.loss, outputs) if return_outputs else outputs.loss
+
 
 class AxolotlMambaTrainer(AxolotlTrainer):
     """
@@ -1311,6 +1328,8 @@ class HFCausalTrainerBuilder(TrainerBuilderBase):
         return callbacks
 
     def _get_trainer_cls(self):
+        if self.cfg.eagle_training:
+            return EagleTrainer
         if self.cfg.relora_steps:
             return ReLoRATrainer
         if self.cfg.model_config_type == "mamba":
