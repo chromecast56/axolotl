@@ -51,6 +51,12 @@ class EagleHead(nn.Module):
 
         self.noise = UniformNoise()
 
+        self.pad_token_id = (
+            model.config.pad_token_id if model.config.pad_token_id is not None
+            else model.config.eos_token_id if model.config.eos_token_id is not None
+            else 0
+        )
+
 
         # NOTE: EAGLE imp doesn't include norm
         # self.norm = type(model.model.norm)(model.config.hidden_size, eps=model.config.rms_norm_eps)
@@ -80,7 +86,7 @@ class EagleHead(nn.Module):
         with torch.no_grad():
             # Instead of shifting, we'll use the next tokens directly
             next_input_ids = input_ids[:, 1:]  # Remove first token
-            pad_column = torch.full((batch_size, 1), IGNORE_TOKEN_ID, dtype=input_ids.dtype, device=input_ids.device)
+            pad_column = torch.full((batch_size, 1), self.pad_token_id, dtype=input_ids.dtype, device=input_ids.device)
             next_input_ids = torch.cat([next_input_ids, pad_column], dim=1)  # Add padding at end
             inputs_embeds = torch.nn.functional.embedding(next_input_ids, self.embed_tokens)
 
