@@ -23,7 +23,9 @@ class UniformNoise:
         self.std = std
 
     def __call__(self, hidden_states):
-        noise = (torch.rand_like(hidden_states) - 0.5) * self.std * 512 / hidden_states.shape[1]
+        # NOTE: original repo scales the noise inversely by sequence length ???
+        # noise = (torch.rand_like(hidden_states) - 0.5) * self.std * 512 / hidden_states.shape[1]
+        noise = (torch.rand_like(hidden_states) - 0.5) * self.std
         return hidden_states + noise
 
 class EagleHead(nn.Module):
