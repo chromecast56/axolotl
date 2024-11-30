@@ -61,8 +61,8 @@ wandb_mode: online
 wandb_project: eagle_replicate
 wandb_entity:
 wandb_watch:
-wandb_name: eagle_replicate
-wandb_run_id: eagle_replicate_1
+wandb_name: eagle_replicate_shifted
+wandb_run_id: eagle_replicate_shifted
 
 
 
@@ -102,7 +102,7 @@ xformers_attention:
 flash_attention: true
 
 warmup_steps: 100
-evals_per_epoch: 2
+evals_per_epoch: 4
 eval_table_size:
 saves_per_epoch: 0
 debug:

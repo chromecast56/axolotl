@@ -28,6 +28,8 @@ class UniformNoise:
         noise = (torch.rand_like(hidden_states) - 0.5) * self.std
         return hidden_states + noise
 
+
+
 class EagleHead(nn.Module):
     def __init__(self, model: PreTrainedModel, num_layers: int):
         super().__init__()
@@ -69,14 +71,20 @@ class EagleHead(nn.Module):
     ):
         # NOTE: EAGLE adds noise, but is an artifact of bad methodology.
         hidden_states = self.noise(hidden_states)
-        batch_size, seq_length, _ = hidden_states.shape
+        batch_size, seq_length, hidden_dim = hidden_states.shape
+
+        # Shift tokens forward by one position
+        # NOTE: See section 4.3.2 in EAGLE for why. For given hidden state, we technically know what the next token is by just doing lm head. 
+        # So, we're allowed to be forward looking by 1 token (this results in +10% acceptance rate).
 
         with torch.no_grad():
-            inputs_embeds = torch.nn.functional.embedding(input_ids, self.embed_tokens)
+            # Instead of shifting, we'll use the next tokens directly
+            next_input_ids = input_ids[:, 1:]  # Remove first token
+            pad_column = torch.full((batch_size, 1), IGNORE_TOKEN_ID, dtype=input_ids.dtype, device=input_ids.device)
+            next_input_ids = torch.cat([next_input_ids, pad_column], dim=1)  # Add padding at end
+            inputs_embeds = torch.nn.functional.embedding(next_input_ids, self.embed_tokens)
 
         position_ids = position_ids.view(-1, seq_length).long()
-
-
         inputs_embeds = inputs_embeds.to(hidden_states.dtype)
 
         hidden_states = self.fc(torch.cat((inputs_embeds, hidden_states), dim=-1))
